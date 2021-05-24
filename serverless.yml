@@ -1,0 +1,36 @@
+service: s3imagescaler
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: python3.6
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    BUCKET_NAME: image-upload-bucket
+
+functions:
+  getSignedUrl:
+    handler: getSignedUrl.get_signed_upload_url
+    events:
+      - httpApi:
+          path: /image/upload
+          method: GET
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    S3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.BUCKET_NAME}-${self:provider.stage}
+
+custom:
+  S3Bucket:
+    name: !Ref s3Bucket
+    arn: !GetAtt S3Bucket.Arn
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"
