@@ -16,7 +16,8 @@ functions:
     events:
       - httpApi:
           path: /image/upload
-          method: GET
+          method: POST
+
 
 # you can add CloudFormation resource templates here
 resources:
